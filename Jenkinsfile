@@ -194,9 +194,9 @@ pipeline {
                 kubectl apply -f rbac/rbac.yaml
                 kubectl apply -f deployment/nginx-ingress.yaml
                 sleep 5
-                kubectl apply -f service/loadbalancer-aws-elb.yaml
                 cd -
                 rm -rf kubernetes-ingress
+                kubectl apply -f nginx-nlb.yaml
                 kubectl apply -f nginx-ingress-proxy.yaml
                 kubectl get svc --namespace=nginx-ingress
               """
