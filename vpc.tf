@@ -7,7 +7,7 @@
 #
 
 resource "aws_vpc" "eks" {
-  cidr_block = "${var.vpc-network}.0.0/16"
+  cidr_block = "${var.vpc-network}"
 
   tags = {
     "Name"                                          = "eks-${var.cluster-name}"
