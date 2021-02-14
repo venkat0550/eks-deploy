@@ -4,19 +4,19 @@ pipeline {
     choice(name: 'action', choices: 'create\ndestroy', description: 'Create/update or destroy the eks cluster.')
     string(name: 'cluster', defaultValue : 'demo', description: "EKS cluster name;eg demo creates cluster named eks-demo.")
     choice(name: 'k8s_version', choices: '1.17\n1.18\n1.16\n1.15', description: 'K8s version to install.')
-    string(name: 'vpc_network', defaultValue : '10.0', description: "First 2 octets of vpc network; eg 10.0")
+    string(name: 'vpc_network', defaultValue : '10.10.0.0/16', description: "First 2 octets of vpc network; eg 10.0")
     string(name: 'num_subnets', defaultValue : '3', description: "Number of vpc subnets/AZs.")
-    string(name: 'instance_type', defaultValue : 'm5.large', description: "k8s worker node instance type.")
-    string(name: 'num_workers', defaultValue : '3', description: "k8s number of worker instances.")
-    string(name: 'max_workers', defaultValue : '10', description: "k8s maximum number of worker instances that can be scaled.")
-    string(name: 'admin_users', defaultValue : '', description: "Comma delimited list of IAM users to add to the aws-auth config map.")
-    string(name: 'credential', defaultValue : 'jenkins', description: "Jenkins credential that provides the AWS access key and secret.")
-    string(name: 'key_pair', defaultValue : 'spicysomtam-aws4', description: "EC2 instance ssh keypair.")
+    string(name: 'instance_type', defaultValue : 't3a.medium', description: "k8s worker node instance type.")
+    string(name: 'num_workers', defaultValue : '2', description: "k8s number of worker instances.")
+    string(name: 'max_workers', defaultValue : '3', description: "k8s maximum number of worker instances that can be scaled.")
+    string(name: 'admin_users', defaultValue : 'kumarve5', description: "Comma delimited list of IAM users to add to the aws-auth config map.")
+    string(name: 'credential', defaultValue : 'rcc-sbx', description: "Jenkins credential that provides the AWS access key and secret.")
+    string(name: 'key_pair', defaultValue : 'kumarve5-rcc-sbx', description: "EC2 instance ssh keypair.")
     booleanParam(name: 'cloudwatch', defaultValue : true, description: "Setup Cloudwatch logging, metrics and Container Insights?")
     booleanParam(name: 'nginx_ingress', defaultValue : true, description: "Setup nginx ingress and load balancer?")
     booleanParam(name: 'ca', defaultValue : false, description: "Setup k8s Cluster Autoscaler?")
     booleanParam(name: 'cert_manager', defaultValue : false, description: "Setup cert-manager for certificate handling?")
-    string(name: 'region', defaultValue : 'eu-west-1', description: "AWS region.")
+    string(name: 'region', defaultValue : 'us-east-1', description: "AWS region.")
   }
 
   options {
@@ -38,7 +38,15 @@ pipeline {
         }
       }
     }
-
+	
+    // stage('CheckOut SCM') {
+    //     steps {
+    //     checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], 
+    //     doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+    //     userRemoteConfigs: [[url: 'https://github.com/venkat0550/eks-deploy.git']]]
+    //     }
+    //   }
+	
     stage('TF Plan') {
       when {
         expression { params.action == 'create' }
@@ -108,7 +116,6 @@ pipeline {
             
             sh """
               aws eks update-kubeconfig --name eks-${params.cluster} --region ${params.region}
-
               # Add configmap aws-auth if its not there:
               if [ ! "\$(kubectl -n kube-system get cm aws-auth 2> /dev/null)" ]
               then
@@ -229,12 +236,10 @@ pipeline {
             sh """
               [ -d kubernetes-ingress ] && rm -rf kubernetes-ingress
               git clone https://github.com/nginxinc/kubernetes-ingress.git
-
               # Need to clean this up otherwise the vpc can't be deleted
               kubectl delete -f kubernetes-ingress/deployments/service/loadbalancer-aws-elb.yaml || true
               [ -d kubernetes-ingress ] && rm -rf kubernetes-ingress
               sleep 20
-
               terraform workspace select ${params.cluster}
               terraform destroy -auto-approve
             """
