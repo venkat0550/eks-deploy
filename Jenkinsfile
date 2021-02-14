@@ -4,7 +4,11 @@ pipeline {
     choice(name: 'action', choices: 'create\ndestroy', description: 'Create/update or destroy the eks cluster.')
     string(name: 'cluster', defaultValue : 'demo', description: "EKS cluster name;eg demo creates cluster named eks-demo.")
     choice(name: 'k8s_version', choices: '1.17\n1.18\n1.16\n1.15', description: 'K8s version to install.')
+<<<<<<< HEAD
     string(name: 'vpc_network', defaultValue : '10.10', description: "First 2 octets of vpc network; eg 10.0")
+=======
+    string(name: 'vpc_network', defaultValue : '10.10.0.0/16', description: "First 2 octets of vpc network; eg 10.0")
+>>>>>>> c75cf2bfdcf430f5aaa8533ebc07c64a30cef1d8
     string(name: 'num_subnets', defaultValue : '3', description: "Number of vpc subnets/AZs.")
     string(name: 'instance_type', defaultValue : 't3a.medium', description: "k8s worker node instance type.")
     string(name: 'num_workers', defaultValue : '2', description: "k8s number of worker instances.")
