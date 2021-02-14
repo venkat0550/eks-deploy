@@ -196,7 +196,7 @@ pipeline {
                 sleep 5
                 cd -
                 rm -rf kubernetes-ingress
-                kubectl apply -f nginx-nlb.yaml
+                kubectl apply -f ingress-nlb.yaml
                 kubectl apply -f nginx-ingress-proxy.yaml
                 kubectl get svc --namespace=nginx-ingress
               """
