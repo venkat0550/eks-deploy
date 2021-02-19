@@ -11,7 +11,7 @@ pipeline {
     string(name: 'max_workers', defaultValue : '3', description: "k8s maximum number of worker instances that can be scaled.")
     string(name: 'admin_users', defaultValue : 'kumarve5', description: "Comma delimited list of IAM users to add to the aws-auth config map.")
     string(name: 'credential', defaultValue : 'rcc-sbx', description: "Jenkins credential that provides the AWS access key and secret.")
-    //string(name: 'key_pair', defaultValue : 'kumarve5-rcc-sbx', description: "EC2 instance ssh keypair.")
+    string(name: 'key_pair', defaultValue : 'kumarve5-rcc-sbx', description: "EC2 instance ssh keypair.")
     booleanParam(name: 'cloudwatch', defaultValue : true, description: "Setup Cloudwatch logging, metrics and Container Insights?")
     booleanParam(name: 'nginx_ingress', defaultValue : true, description: "Setup nginx ingress and load balancer?")
     booleanParam(name: 'ca', defaultValue : false, description: "Setup k8s Cluster Autoscaler?")
