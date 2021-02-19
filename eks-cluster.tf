@@ -39,7 +39,7 @@ resource "aws_iam_role_policy_attachment" "cluster-AmazonEKSClusterPolicy" {
 resource "aws_security_group" "cluster" {
   name        = "eks-${var.cluster-name}-cluster"
   description = "Cluster communication with worker nodes"
-  vpc_id      = aws_vpc.eks.id
+  vpc_id      = data.aws_vpc.vpc.id
 
   egress {
     from_port   = 0
@@ -61,7 +61,7 @@ resource "aws_eks_cluster" "eks" {
 
   vpc_config {
     security_group_ids = [aws_security_group.cluster.id]
-    subnet_ids         = aws_subnet.eks.*.id
+    subnet_ids         = data.aws_subnet_ids.private.ids
   }
 
   depends_on = [
@@ -70,3 +70,12 @@ resource "aws_eks_cluster" "eks" {
   ]
 }
 
+resource "null_resource" "tag-subnets" {
+  count = length(data.aws_subnet_ids.private.ids)
+  triggers = {
+    version = "1"
+  }
+  provisioner "local-exec" {
+    command = "aws ec2 create-tags --resources ${data.aws_subnet_ids.public.ids[count.index]} --tags Key=kubernetes.io/role/elb,Value=1 Key=kubernetes.io/cluster/${var.cluster-name},Value=shared"
+  }
+}

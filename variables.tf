@@ -4,7 +4,7 @@
 
 variable "aws_region" {
   description = "The AWS region to create things in."
-  default     = "eu-west-1"
+  default     = "us-east-1"
 }
 
 variable "cluster-name" {
@@ -38,7 +38,7 @@ variable "vpc-subnets" {
 
 variable "inst-type" {
   description = "EKS worker instance type."
-  default     = "m5.large"
+  default     = "t3a.medium"
   type        = string
 }
 
@@ -51,7 +51,7 @@ variable "inst_disk_size" {
 
 variable "inst_key_pair" {
   description = "EKS worker instance ssh key pair."
-  default     = "spicysomtam-aws4"
+  default     = "kumarve5-rcc-sbx"
   type        = string
 }
 
