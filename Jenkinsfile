@@ -11,12 +11,12 @@ pipeline {
     string(name: 'max_workers', defaultValue : '3', description: "k8s maximum number of worker instances that can be scaled.")
     string(name: 'admin_users', defaultValue : 'kumarve5', description: "Comma delimited list of IAM users to add to the aws-auth config map.")
     string(name: 'credential', defaultValue : 'rcc-sbx', description: "Jenkins credential that provides the AWS access key and secret.")
-    string(name: 'key_pair', defaultValue : 'kumarve5-rcc-sbx', description: "EC2 instance ssh keypair.")
+    string(name: 'key_pair', defaultValue : 'kumarve5-rcc-sbx-ireland', description: "EC2 instance ssh keypair.")
     booleanParam(name: 'cloudwatch', defaultValue : true, description: "Setup Cloudwatch logging, metrics and Container Insights?")
     booleanParam(name: 'nginx_ingress', defaultValue : true, description: "Setup nginx ingress and load balancer?")
     booleanParam(name: 'ca', defaultValue : false, description: "Setup k8s Cluster Autoscaler?")
     booleanParam(name: 'cert_manager', defaultValue : false, description: "Setup cert-manager for certificate handling?")
-    string(name: 'region', defaultValue : 'us-east-1', description: "AWS region.")
+    string(name: 'region', defaultValue : 'eu-west-1', description: "AWS region.")
   }
 
   options {
@@ -171,12 +171,11 @@ pipeline {
               // Setup documented here: https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html
               sh """
                 kubectl apply -f https://raw.githubusercontent.com/kubernetes/autoscaler/master/cluster-autoscaler/cloudprovider/aws/examples/cluster-autoscaler-autodiscover.yaml
-                kubectl -n kube-system annotate deployment.apps/cluster-autoscaler cluster-autoscaler.kubernetes.io/safe-to-evict="false"
-                kubectl -n kube-system get deployment.apps/cluster-autoscaler -o json | \\
-                  jq | \\
-                  sed 's/<YOUR CLUSTER NAME>/eks-${params.cluster}/g' | \\
-                  jq '.spec.template.spec.containers[0].command += ["--balance-similar-node-groups","--skip-nodes-with-system-pods=false"]' | \\
-                  kubectl apply -f -
+                set +e
+                kubectl -n kube-system annotate deployment.apps/cluster-autoscaler cluster-autoscaler.kubernetes.io/safe-to-evict="false" 
+                set -e
+                kubectl -n kube-system get deployment.apps/cluster-autoscaler -o yaml | sed 's/<YOURCLUSTERNAME>/eks-${params.cluster}/g' | kubectl apply -f -
+                kubectl -n kube-system get deployment.apps/cluster-autoscaler -o json | jq '.spec.template.spec.containers[0].command += ["--balance-similar-node-groups","--skip-nodes-with-system-pods=false"]' | kubectl apply -f -
                 kubectl -n kube-system set image deployment.apps/cluster-autoscaler cluster-autoscaler=${gregion}.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler:v${params.k8s_version}.${tag}
               """
             }
