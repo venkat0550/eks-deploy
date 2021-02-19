@@ -39,13 +39,13 @@ pipeline {
       }
     }
 	
-    // stage('CheckOut SCM') {
-    //     steps {
-    //     checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/master']], 
-    //     doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
-    //     userRemoteConfigs: [[url: 'https://github.com/venkat0550/eks-deploy.git']]]
-    //     }
-    //   }
+    stage('CheckOut SCM') {
+        steps {
+        checkout changelog: false, poll: false, scm: [$class: 'GitSCM', branches: [[name: '*/dev-existing-vpc']], 
+        doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], 
+        userRemoteConfigs: [[url: 'https://github.com/venkat0550/eks-deploy.git']]]
+        }
+      }
 	
     stage('TF Plan') {
       when {
