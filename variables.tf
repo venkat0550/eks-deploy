@@ -57,24 +57,24 @@ variable "inst_key_pair" {
 
 variable "num-workers" {
   description = "Number of eks worker instances to deploy."
-  default = "3"
-  type    = string
+  default     = "3"
+  type        = string
 }
 
 variable "max-workers" {
   description = "Max number of eks worker instances that can be scaled."
-  default = "10"
-  type    = string
+  default     = "10"
+  type        = string
 }
 
 variable "cloudwatch" {
-  type    = bool 
-  default = true
+  type        = bool
+  default     = true
   description = "Install Cloudwatch logging, metrics and Container Insights."
 }
 
 variable "ca" {
-  type    = bool 
-  default = false
+  type        = bool
+  default     = false
   description = "Install k8s Cluster Autoscaler."
 }

@@ -3,10 +3,10 @@
 #
 
 provider "aws" {
-  region = var.aws_region
-  version = "~> 3.9"
- # shared_credentials_file = "%USERPROFILE%\\.aws\\credentials"
- # profile                 = "rcc-sbx"
+  region                  = var.aws_region
+  version                 = "~> 3.9"
+  shared_credentials_file = "%USERPROFILE%\\.aws\\credentials"
+  profile                 = "rcc-sbx"
 }
 
 # Using these data sources allows the configuration to be

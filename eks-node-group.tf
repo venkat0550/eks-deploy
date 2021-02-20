@@ -23,7 +23,7 @@ POLICY
 }
 
 resource "aws_iam_policy" "node_ca" {
-  count      = var.ca ? 1 : 0
+  count       = var.ca ? 1 : 0
   name        = "eks-${var.cluster-name}-ca"
   path        = "/"
   description = "EKS Cluster Autoscalar policy"
@@ -83,7 +83,7 @@ resource "aws_eks_node_group" "node" {
   node_group_name = "eks-${var.cluster-name}-1"
   node_role_arn   = aws_iam_role.node.arn
   subnet_ids      = data.aws_subnet_ids.private.ids
-  instance_types  = [ var.inst-type ]
+  instance_types  = [var.inst-type]
   disk_size       = var.inst_disk_size
 
   scaling_config {

@@ -54,9 +54,9 @@ resource "aws_security_group" "cluster" {
 }
 
 resource "aws_eks_cluster" "eks" {
-  name      = "eks-${var.cluster-name}"
-  role_arn  = aws_iam_role.cluster.arn
-  version   = var.k8s_version
+  name                      = "eks-${var.cluster-name}"
+  role_arn                  = aws_iam_role.cluster.arn
+  version                   = var.k8s_version
   enabled_cluster_log_types = var.cloudwatch ? ["api", "audit", "authenticator", "controllerManager", "scheduler"] : []
 
   vpc_config {
@@ -66,16 +66,16 @@ resource "aws_eks_cluster" "eks" {
 
   depends_on = [
     aws_iam_role_policy_attachment.cluster-AmazonEKSClusterPolicy,
-#    aws_iam_role_policy_attachment.cluster-AmazonEKSServicePolicy,
+    #    aws_iam_role_policy_attachment.cluster-AmazonEKSServicePolicy,
   ]
 }
 
 resource "null_resource" "tag-subnets" {
-  count = length(data.aws_subnet_ids.private.ids)
+  count = length(data.aws_subnet_ids.public.ids)
   triggers = {
     version = "1"
   }
   provisioner "local-exec" {
-    command = "aws ec2 create-tags --resources ${data.aws_subnet_ids.public.ids[count.index]} --tags Key=kubernetes.io/role/elb,Value=1 Key=kubernetes.io/cluster/${var.cluster-name},Value=shared"
+    command = "aws ec2 create-tags --resources ${local.pub_sub_ids} --tags Key=kubernetes.io/role/elb,Value=1 Key=kubernetes.io/cluster/${var.cluster-name},Value=shared"
   }
 }

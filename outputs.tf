@@ -52,9 +52,9 @@ KUBECONFIG
 
 }
 
-output "config_map_aws_auth" {
-  value = local.config_map_aws_auth
-}
+# output "config_map_aws_auth" {
+#   value = local.config_map_aws_auth
+# }
 
 # Commented this out as we now have `aws eks update-kubeconfig` to get the kubeconfig and its a security risk having this in the Jenkins logging.
 # Uncomment this if you want it.
@@ -62,3 +62,21 @@ output "config_map_aws_auth" {
 #  value = local.kubeconfig
 #}
 
+
+
+output "vpcid" {
+  value = data.aws_vpc.vpc.id
+}
+
+output "subnetids" {
+  value = data.aws_subnet_ids.private.ids
+}
+
+output "pub_subnetids" {
+  value = data.aws_subnet_ids.public.ids
+}
+
+
+output "pubsubnet" {
+  value = local.pub_sub_ids
+}
