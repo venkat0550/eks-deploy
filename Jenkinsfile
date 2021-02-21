@@ -90,7 +90,7 @@ pipeline {
       }
       steps {
         script {
-          /input "Create/update Terraform stack eks-${params.cluster} in aws?" 
+          // input "Create/update Terraform stack eks-${params.cluster} in aws?" 
 	  def plan = readFile ${plan}
           input message: "Do you want to apply the plan?",
                 parameters: [text(name: 'Plan', description: "Please review the plan for Create/update Terraform stack eks-${params.cluster} in aws?", defaultValue: plan)]
