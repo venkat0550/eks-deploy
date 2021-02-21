@@ -13,7 +13,7 @@ pipeline {
     string(name: 'credential', defaultValue : 'rcc-sbx', description: "Jenkins credential that provides the AWS access key and secret.")
     string(name: 'key_pair', defaultValue : 'kumarve5-rcc-sbx', description: "EC2 instance ssh keypair.")
     booleanParam(name: 'cloudwatch', defaultValue : true, description: "Setup Cloudwatch logging, metrics and Container Insights?")
-    booleanParam(name: 'nginx_ingress', defaultValue : true, description: "Setup nginx ingress and load balancer?")
+    booleanParam(name: 'nginx_ingress', defaultValue : false, description: "Setup nginx ingress and load balancer?")
     booleanParam(name: 'ca', defaultValue : false, description: "Setup k8s Cluster Autoscaler?")
     booleanParam(name: 'helm_ingress', defaultValue : true, description: "Setup nginx ingress via helm?")
     booleanParam(name: 'cert_manager', defaultValue : false, description: "Setup cert-manager for certificate handling?")
@@ -90,11 +90,7 @@ pipeline {
       }
       steps {
         script {
-          // input "Create/update Terraform stack eks-${params.cluster} in aws?" 
-	  def plan = readFile ${plan}
-          input message: "Do you want to apply the plan?",
-                parameters: [text(name: 'Plan', description: "Please review the plan for Create/update Terraform stack in aws?", defaultValue: plan)]
-
+          input "Create/update Terraform stack eks-${params.cluster} in aws?"
           withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', 
           credentialsId: params.credential, 
           accessKeyVariable: 'AWS_ACCESS_KEY_ID',  
