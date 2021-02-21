@@ -78,3 +78,11 @@ variable "ca" {
   default     = false
   description = "Install k8s Cluster Autoscaler."
 }
+
+variable "helm_ingress" {
+  type        = bool
+  default     = true
+  description = "Install k8s helm_ingress."
+}
+
+

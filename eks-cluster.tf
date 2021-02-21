@@ -60,10 +60,16 @@ resource "aws_eks_cluster" "eks" {
   enabled_cluster_log_types = var.cloudwatch ? ["api", "audit", "authenticator", "controllerManager", "scheduler"] : []
 
   vpc_config {
-    security_group_ids = [aws_security_group.cluster.id]
-    subnet_ids         = data.aws_subnet_ids.private.ids
+    security_group_ids      = [aws_security_group.cluster.id]
+    subnet_ids              = data.aws_subnet_ids.private.ids
+    endpoint_private_access = true
+
   }
 
+  kubernetes_network_config {
+    service_ipv4_cidr = "172.16.0.0/12"
+
+  }
   depends_on = [
     aws_iam_role_policy_attachment.cluster-AmazonEKSClusterPolicy,
     #    aws_iam_role_policy_attachment.cluster-AmazonEKSServicePolicy,
@@ -71,7 +77,7 @@ resource "aws_eks_cluster" "eks" {
 }
 
 resource "null_resource" "tag-subnets" {
-  count = length(data.aws_subnet_ids.public.ids)
+  # count = length(data.aws_subnet_ids.public.ids)
   triggers = {
     version = "1"
   }

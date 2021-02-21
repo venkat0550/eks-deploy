@@ -15,6 +15,7 @@ pipeline {
     booleanParam(name: 'cloudwatch', defaultValue : true, description: "Setup Cloudwatch logging, metrics and Container Insights?")
     booleanParam(name: 'nginx_ingress', defaultValue : true, description: "Setup nginx ingress and load balancer?")
     booleanParam(name: 'ca', defaultValue : false, description: "Setup k8s Cluster Autoscaler?")
+    booleanParam(name: 'helm_ingress', defaultValue : true, description: "Setup nginx ingress via helm?")
     booleanParam(name: 'cert_manager', defaultValue : false, description: "Setup cert-manager for certificate handling?")
     string(name: 'region', defaultValue : 'us-east-1', description: "AWS region.")
   }
@@ -75,6 +76,7 @@ pipeline {
                 -var ca=${params.ca} \
                 -var k8s_version=${params.k8s_version} \
                 -var aws_region=${params.region} \
+                -var helm_ingres=${param.helm_ingress}
                 -out ${plan}
             """
           }
