@@ -203,6 +203,32 @@ pipeline {
               """
             }
 
+            if (params.helm_ingress == true) {
+                echo "setting up the helm_ingress controller"
+                sh """
+                terraform init
+                terraform workspace new ${params.cluster} || true
+                terraform workspace select ${params.cluster}
+                terraform plan \
+                  -var cluster-name=${params.cluster} \
+                  -var vpc-network=${params.vpc_network} \
+                  -var vpc-subnets=${params.num_subnets} \
+                  -var inst-type=${params.instance_type} \
+                  -var num-workers=${params.num_workers} \
+                  -var max-workers=${params.max_workers} \
+                  -var cloudwatch=${params.cloudwatch} \
+                  -var inst_key_pair=${params.key_pair} \
+                  -var ca=${params.ca} \
+                  -var k8s_version=${params.k8s_version} \
+                  -var aws_region=${params.region} \
+                  -var helm_ingress=${params.helm_ingress} \
+                  -out ${plan}
+                terraform apply -input=false -auto-approve ${plan}
+            """
+
+
+            }
+
             if (params.cert_manager == true) {
               echo "Setting up cert-manager."
               sh """
