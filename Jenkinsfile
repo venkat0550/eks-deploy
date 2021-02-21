@@ -76,7 +76,6 @@ pipeline {
                 -var ca=${params.ca} \
                 -var k8s_version=${params.k8s_version} \
                 -var aws_region=${params.region} \
-                -var helm_ingress=${params.helm_ingress} \
                 -out ${plan}
             """
           }
