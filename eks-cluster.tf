@@ -67,7 +67,7 @@ resource "aws_eks_cluster" "eks" {
   }
 
   kubernetes_network_config {
-    service_ipv4_cidr = "172.16.0.0/12"
+    service_ipv4_cidr = "192.168.0.0/16"
 
   }
   depends_on = [
