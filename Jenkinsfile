@@ -15,7 +15,7 @@ pipeline {
     booleanParam(name: 'cloudwatch', defaultValue : true, description: "Setup Cloudwatch logging, metrics and Container Insights?")
     booleanParam(name: 'nginx_ingress', defaultValue : false, description: "Setup nginx ingress and load balancer?")
     booleanParam(name: 'ca', defaultValue : false, description: "Setup k8s Cluster Autoscaler?")
-    booleanParam(name: 'helm_ingress', defaultValue : true, description: "Setup nginx ingress via helm?")
+  // booleanParam(name: 'helm_ingress', defaultValue : true, description: "Setup nginx ingress via helm?")
     booleanParam(name: 'cert_manager', defaultValue : false, description: "Setup cert-manager for certificate handling?")
     string(name: 'region', defaultValue : 'us-east-1', description: "AWS region.")
   }
@@ -199,32 +199,6 @@ pipeline {
                 kubectl apply -f nginx-ingress-proxy.yaml
                 kubectl get svc --namespace=nginx-ingress
               """
-            }
-
-            if (params.helm_ingress == true) {
-                echo "setting up the helm_ingress controller"
-                sh """
-                terraform init
-                terraform workspace new ${params.cluster} || true
-                terraform workspace select ${params.cluster}
-                terraform plan \
-                  -var cluster-name=${params.cluster} \
-                  -var vpc-network=${params.vpc_network} \
-                  -var vpc-subnets=${params.num_subnets} \
-                  -var inst-type=${params.instance_type} \
-                  -var num-workers=${params.num_workers} \
-                  -var max-workers=${params.max_workers} \
-                  -var cloudwatch=${params.cloudwatch} \
-                  -var inst_key_pair=${params.key_pair} \
-                  -var ca=${params.ca} \
-                  -var k8s_version=${params.k8s_version} \
-                  -var aws_region=${params.region} \
-                  -var helm_ingress=${params.helm_ingress} \
-                  -out ${plan}
-                terraform apply -input=false -auto-approve ${plan}
-            """
-
-
             }
 
             if (params.cert_manager == true) {
